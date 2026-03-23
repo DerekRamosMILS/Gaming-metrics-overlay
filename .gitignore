@@ -1,0 +1,18 @@
+# Dependencias
+frontend/node_modules/
+backend/__pycache__/
+
+# Carpetas de compilación y ejecutables finales
+frontend/dist/
+backend/dist/
+backend/build/
+backend/main.spec
+Release/
+
+# Logs
+frontend/build_log.txt
+*.log
+
+# Archivos de SO
+.DS_Store
+Thumbs.db

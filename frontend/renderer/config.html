@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src ws://127.0.0.1:29874;" />
+  <title>Configuración</title>
+  <style>
+    :root {
+      --bg: #1a1a2e;
+      --surface: #16213e;
+      --border: #0f3460;
+      --accent: #e94560;
+      --text: #e8e8e8;
+      --text-muted: #888;
+      --green: #2ecc71;
+      --font: 'Segoe UI', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      font-size: 14px;
+    }
+
+    h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    h2 {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      margin-top: 20px;
+    }
+
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+    }
+
+    .checkbox-row label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      gap: 16px;
+    }
+
+    .field-row label {
+      color: var(--text-muted);
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .field-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .field-row input[type="number"],
+    .field-row select {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 13px;
+      width: 120px;
+    }
+
+    .field-row .value-display {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 48px;
+      text-align: right;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      justify-content: flex-end;
+    }
+
+    button {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: opacity 0.15s;
+    }
+
+    button:hover { opacity: 0.85; }
+
+    .btn-save   { background: var(--green); color: #000; }
+    .btn-cancel { background: var(--border); color: var(--text); }
+
+    #status {
+      font-size: 12px;
+      color: var(--green);
+      text-align: right;
+      min-height: 20px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>⚙️ Configuración del Overlay</h1>
+
+  <!-- Métricas activas -->
+  <h2>Métricas</h2>
+  <div class="section">
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="cfg-fps" /> FPS</label>
+    </div>
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="cfg-cpu-usage" /> CPU Uso</label>
+    </div>
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="cfg-cpu-temp" /> CPU Temperatura</label>
+    </div>
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="cfg-gpu-usage" /> GPU Uso</label>
+    </div>
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="cfg-gpu-temp" /> GPU Temperatura</label>
+    </div>
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="cfg-ram" /> RAM</label>
+    </div>
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="cfg-clock" /> Reloj</label>
+    </div>
+  </div>
+
+  <!-- Apariencia -->
+  <h2>Apariencia</h2>
+  <div class="section">
+    <div class="field-row">
+      <label>Tema</label>
+      <select id="cfg-theme">
+        <option value="default">Default</option>
+        <option value="glass">Glass (Glassmorphism)</option>
+        <option value="minimal">Minimal</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <label>Layout</label>
+      <select id="cfg-layout">
+        <option value="horizontal">Horizontal (fila)</option>
+        <option value="vertical">Vertical (columna)</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <label>Posición</label>
+      <select id="cfg-position">
+        <option value="top-left">Arriba izquierda</option>
+        <option value="top-center">Arriba centro</option>
+        <option value="top-right">Arriba derecha</option>
+        <option value="bottom-left">Abajo izquierda</option>
+        <option value="bottom-center">Abajo centro</option>
+        <option value="bottom-right">Abajo derecha</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <label>Opacidad</label>
+      <input type="range" id="cfg-opacity" min="20" max="100" step="5" />
+      <span class="value-display" id="opacity-display">85%</span>
+    </div>
+    <div class="field-row">
+      <label>Tamaño texto</label>
+      <input type="range" id="cfg-font-size" min="10" max="22" step="1" />
+      <span class="value-display" id="font-size-display">14px</span>
+    </div>
+  </div>
+
+  <!-- Colores -->
+  <h2>Colores</h2>
+  <div class="section">
+    <div class="field-row">
+      <label>Texto / base</label>
+      <input type="color" id="cfg-color-text" value="#2ecc71"
+             style="width:48px;height:28px;border:none;background:none;cursor:pointer;padding:0;" />
+    </div>
+    <div class="field-row">
+      <label>FPS</label>
+      <input type="color" id="cfg-color-fps" value="#2ecc71"
+             style="width:48px;height:28px;border:none;background:none;cursor:pointer;padding:0;" />
+    </div>
+    <div class="field-row">
+      <label>Reloj</label>
+      <input type="color" id="cfg-color-clock" value="#2ecc71"
+             style="width:48px;height:28px;border:none;background:none;cursor:pointer;padding:0;" />
+    </div>
+    <div class="field-row">
+      <label>Normal (&lt;60%)</label>
+      <input type="color" id="cfg-color-good" value="#2ecc71"
+             style="width:48px;height:28px;border:none;background:none;cursor:pointer;padding:0;" />
+    </div>
+    <div class="field-row">
+      <label>Alerta (60–85%)</label>
+      <input type="color" id="cfg-color-warn" value="#f39c12"
+             style="width:48px;height:28px;border:none;background:none;cursor:pointer;padding:0;" />
+    </div>
+    <div class="field-row">
+      <label>Crítico (&gt;85%)</label>
+      <input type="color" id="cfg-color-crit" value="#e74c3c"
+             style="width:48px;height:28px;border:none;background:none;cursor:pointer;padding:0;" />
+    </div>
+  </div>
+
+  <!-- Comportamiento -->
+  <h2>Comportamiento</h2>
+  <div class="section">
+    <div class="field-row">
+      <label>Actualización (ms)</label>
+      <select id="cfg-interval">
+        <option value="500">500ms (rápido)</option>
+        <option value="1000">1000ms (normal)</option>
+        <option value="2000">2000ms (ahorro)</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <label>Hotkey toggle</label>
+      <input type="text" id="cfg-hotkey" placeholder="alt+f10"
+             style="background:var(--bg);color:var(--text);border:1px solid var(--border);
+                    border-radius:4px;padding:4px 8px;font-size:13px;width:120px;" />
+    </div>
+    <div class="field-row" style="border-top:1px solid var(--border);margin-top:8px;padding-top:12px;">
+      <label>Posición overlay</label>
+      <button id="btn-drag-toggle"
+              style="background:var(--border);color:var(--text);border:none;border-radius:6px;
+                     padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;
+                     transition:background 0.2s,color 0.2s;">
+        🔓 Mover
+      </button>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-cancel" id="btn-cancel">Cancelar</button>
+    <button class="btn-save" id="btn-save">Guardar</button>
+  </div>
+
+  <div id="status"></div>
+
+  <script src="config.js"></script>
+</body>
+</html>

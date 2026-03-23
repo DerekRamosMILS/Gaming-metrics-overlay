@@ -1,0 +1,349 @@
+/* ── Reset y base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: fit-content;
+  height: fit-content;
+  overflow: visible;
+  background: transparent;
+  /* Fuerza fondo transparente en Electron */
+  -webkit-app-region: no-drag;
+}
+
+/* ── Variables CSS ────────────────────────────────────────────────────────── */
+:root {
+  --font-size: 13px;
+  --font-family: 'Consolas', 'Courier New', monospace;
+  --bg-color: rgba(0, 0, 0, 0.72);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --text-primary: #2ecc71;
+  --text-label: #888;
+  --color-good: #2ecc71;   /* Verde: valor normal */
+  --color-warn: #f39c12;   /* Naranja: valor medio-alto */
+  --color-crit: #e74c3c;   /* Rojo: valor crítico */
+  --color-fps: #2ecc71;    /* FPS — hereda color principal */
+  --color-clock: #2ecc71;  /* Reloj — hereda color principal */
+  --padding-x: 10px;
+  --padding-y: 8px;
+  --row-gap: 3px;
+  --border-radius: 8px;
+}
+
+/* ── Overlay container ────────────────────────────────────────────────────── */
+.overlay {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--row-gap);
+  padding: var(--padding-y) var(--padding-x);
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  min-width: 160px;
+  width: fit-content;
+}
+
+/* ── Filas de métricas ────────────────────────────────────────────────────── */
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  line-height: 1.3;
+}
+
+.metric-label {
+  font-family: var(--font-family);
+  font-size: calc(var(--font-size) - 1px);
+  font-weight: 600;
+  color: var(--text-label);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.metric-value {
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  text-align: right;
+  transition: color 0.3s ease;
+}
+
+/* ── Colores semánticos por métrica ───────────────────────────────────────── */
+#val-fps        { color: var(--color-fps); }
+#val-clock      { color: var(--color-clock); font-size: calc(var(--font-size) + 1px); }
+
+/* Clases de estado para CPU/GPU/RAM */
+.good  { color: var(--color-good) !important; }
+.warn  { color: var(--color-warn) !important; }
+.crit  { color: var(--color-crit) !important; }
+
+/* El reloj ocupa toda la fila */
+#row-clock {
+  justify-content: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: calc(var(--row-gap) + 2px);
+  margin-top: 2px;
+}
+
+/* ── Separador visual entre grupos ───────────────────────────────────────── */
+.metric-separator {
+  height: 1px;
+  background: var(--border-color);
+  margin: 2px 0;
+}
+
+/* ── Punto de conexión ────────────────────────────────────────────────────── */
+.connection-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  transition: background-color 0.5s ease;
+}
+
+.connection-dot.connected    { background: var(--color-good); }
+.connection-dot.disconnected { background: var(--color-crit); }
+.connection-dot.connecting   { background: var(--color-warn); }
+
+/* ── Animación de parpadeo al actualizar FPS ─────────────────────────────── */
+@keyframes pulse {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* Aplicado dinámicamente vía JS cuando el FPS está bajo */
+.fps-low {
+  animation: pulse 1s infinite;
+}
+
+/* ── Ocultar filas deshabilitadas ─────────────────────────────────────────── */
+.metric-row.hidden {
+  display: none;
+}
+
+/* ── Layout horizontal ────────────────────────────────────────────────────── */
+/* Cada métrica se convierte en un bloque vertical; todos en fila */
+.overlay.layout-horizontal {
+  flex-direction: row;
+  align-items: center;
+  min-width: unset;
+  gap: 4px;
+}
+
+.overlay.layout-horizontal .metric-row {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 8px;
+}
+
+.overlay.layout-horizontal .metric-label {
+  font-size: calc(var(--font-size) - 3px);
+  text-align: center;
+}
+
+.overlay.layout-horizontal .metric-value {
+  text-align: center;
+}
+
+/* El reloj pierde su separador superior y se separa con un borde izquierdo */
+.overlay.layout-horizontal #row-clock {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+  border-left: 1px solid var(--border-color);
+}
+
+/* ── Botón de salida ──────────────────────────────────────────────────────── */
+.btn-quit {
+  position: absolute;
+  top: 4px;
+  right: 16px;   /* Deja espacio al punto de conexión */
+  width: 16px;
+  height: 16px;
+  background: rgba(231, 76, 60, 0);   /* Transparente por defecto */
+  border: none;
+  border-radius: 50%;
+  color: transparent;
+  font-size: 9px;
+  line-height: 16px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, color 0.2s ease;
+  /* El botón es clickeable aunque el overlay sea click-through:
+     overlay.js hace setIgnoreMouseEvents(false) en hover */
+  pointer-events: auto;
+  z-index: 10;
+}
+
+/* Muestra el botón al hacer hover sobre el overlay */
+.overlay:hover .btn-quit,
+.btn-quit:hover {
+  background: rgba(231, 76, 60, 0.85);
+  color: white;
+}
+
+/* ── Botón de lock ────────────────────────────────────────────────────────── */
+.btn-lock {
+  position: absolute;
+  top: 4px;
+  right: 34px;   /* A la izquierda del btn-quit */
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: transparent;
+  font-size: 9px;
+  line-height: 16px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+  pointer-events: auto;
+  z-index: 10;
+}
+
+/* Visible al hover (modo bloqueado) */
+.overlay:hover .btn-lock,
+.btn-lock:hover {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* Modo desbloqueado — siempre visible + indicador naranja */
+.overlay.unlocked {
+  outline: 2px solid var(--color-warn);
+  outline-offset: -2px;
+  cursor: grab;
+}
+
+.overlay.unlocked:active {
+  cursor: grabbing;
+}
+
+.overlay.unlocked .btn-lock {
+  color: var(--color-warn);
+}
+
+/* ── Tema: Glass (glassmorphism estilo Apple) ─────────────────────────────── */
+.overlay.theme-glass {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-radius: 14px;
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+.overlay.theme-glass .metric-label {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.overlay.theme-glass .metric-value {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.overlay.theme-glass #row-clock {
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+.overlay.theme-glass .metric-separator {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.overlay.theme-glass .connection-dot.connected    { background: #34d399; }
+.overlay.theme-glass .connection-dot.disconnected { background: #f87171; }
+.overlay.theme-glass .connection-dot.connecting   { background: #fbbf24; }
+
+/* ── Tema: Minimal (sin fondo, formato label:valor) ──────────────────────── */
+.overlay.theme-minimal {
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  gap: 2px;
+  padding: 4px 6px;
+  min-width: unset;
+}
+
+.overlay.theme-minimal .metric-row {
+  justify-content: flex-start;
+  gap: 0;
+}
+
+.overlay.theme-minimal .metric-separator,
+.overlay.theme-minimal .connection-dot {
+  display: none;
+}
+
+.overlay.theme-minimal .metric-label {
+  font-size: var(--font-size);
+  font-weight: 400;
+  color: rgba(200, 200, 200, 0.70);
+  text-transform: lowercase;
+  letter-spacing: 0;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.95), 0 0 6px rgba(0,0,0,0.8);
+}
+
+.overlay.theme-minimal .metric-label::after {
+  content: ':';
+}
+
+.overlay.theme-minimal .metric-value {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.95), 0 0 6px rgba(0,0,0,0.8);
+}
+
+.overlay.theme-minimal #val-fps        { color: var(--color-fps); }
+.overlay.theme-minimal #val-clock      { color: var(--color-clock); font-size: var(--font-size); }
+
+.overlay.theme-minimal #row-clock {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+/* En layout horizontal + minimal, separar con un poco de margen */
+.overlay.theme-minimal.layout-horizontal .metric-row {
+  padding: 0 4px;
+}
+
+.overlay.theme-minimal .btn-quit,
+.overlay.theme-minimal .btn-lock {
+  opacity: 0;
+}
+
+.overlay.theme-minimal:hover .btn-quit,
+.overlay.theme-minimal .btn-quit:hover {
+  opacity: 1;
+  background: rgba(231, 76, 60, 0.85);
+  color: white;
+}
+
+.overlay.theme-minimal:hover .btn-lock,
+.overlay.theme-minimal .btn-lock:hover {
+  opacity: 1;
+}
+
+.overlay.theme-minimal.unlocked .btn-lock {
+  opacity: 1;
+  color: var(--color-warn);
+}

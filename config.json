@@ -1,0 +1,31 @@
+{
+  "metrics": {
+    "fps": false,
+    "cpu_usage": true,
+    "cpu_temp": true,
+    "gpu_usage": true,
+    "gpu_temp": true,
+    "ram_usage": true,
+    "clock": true
+  },
+  "display": {
+    "position": "top-center",
+    "opacity": 0.8,
+    "font_size": 14,
+    "hotkey": "alt+f10",
+    "update_interval": 2000,
+    "visible": true,
+    "layout": "horizontal",
+    "theme": "minimal",
+    "colors": {
+      "text": "#2ecc71",
+      "good": "#2ecc71",
+      "warn": "#2fcc71",
+      "crit": "#2fcc71",
+      "fps": "#2ecc71",
+      "clock": "#2ecc71"
+    },
+    "x": 1,
+    "y": 0
+  }
+}

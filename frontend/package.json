@@ -1,0 +1,25 @@
+{
+  "name": "overlaymils",
+  "version": "1.0.0",
+  "description": "Overlay de métricas en tiempo real para videojuegos",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.overlaymils",
+    "productName": "OverlayMils",
+    "win": {
+      "target": "dir",
+      "icon": "../assets/icon.ico"
+    }
+  }
+}
