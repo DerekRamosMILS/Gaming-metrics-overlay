@@ -2,7 +2,7 @@
 title Overlay Videojuegos
 
 :: ── Auto-elevación a administrador ────────────────────────────────────────────
-:: Necesario para leer temperaturas de CPU/GPU via LibreHardwareMonitor
+:: Necesario para que PresentMon pueda leer FPS de otros procesos via ETW
 net session >nul 2>&1
 if %errorlevel% neq 0 (
     echo [INFO] Solicitando permisos de administrador...
