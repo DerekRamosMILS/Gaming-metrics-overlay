@@ -28,7 +28,6 @@ const el = {
   overlay:     document.getElementById('overlay'),
   fps:         document.getElementById('val-fps'),
   cpuUsage:    document.getElementById('val-cpu-usage'),
-  cpuTemp:     document.getElementById('val-cpu-temp'),
   gpuUsage:    document.getElementById('val-gpu-usage'),
   gpuTemp:     document.getElementById('val-gpu-temp'),
   ram:         document.getElementById('val-ram'),
@@ -36,7 +35,6 @@ const el = {
   dot:         document.getElementById('connection-dot'),
   rowFps:      document.getElementById('row-fps'),
   rowCpuUsage: document.getElementById('row-cpu-usage'),
-  rowCpuTemp:  document.getElementById('row-cpu-temp'),
   rowGpuUsage: document.getElementById('row-gpu-usage'),
   rowGpuTemp:  document.getElementById('row-gpu-temp'),
   rowRam:      document.getElementById('row-ram'),
@@ -119,10 +117,6 @@ function renderMetrics(data) {
       el.cpuUsage.textContent = fmt(usage, '%', 1);
       applyUsageColor(el.cpuUsage, usage);
     }
-    if (temp !== undefined) {
-      el.cpuTemp.textContent = fmt(temp, '°C', 1);
-      applyTempColor(el.cpuTemp, temp);
-    }
   }
 
   // GPU
@@ -165,7 +159,6 @@ function applyConfig(cfg) {
   // Visibilidad de filas
   setRowVisible(el.rowFps,      m.fps !== false);
   setRowVisible(el.rowCpuUsage, m.cpu_usage !== false);
-  setRowVisible(el.rowCpuTemp,  m.cpu_temp !== false);
   setRowVisible(el.rowGpuUsage, m.gpu_usage !== false);
   setRowVisible(el.rowGpuTemp,  m.gpu_temp !== false);
   setRowVisible(el.rowRam,      m.ram_usage !== false);

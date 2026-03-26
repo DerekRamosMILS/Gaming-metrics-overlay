@@ -8,7 +8,6 @@ let currentConfig = null;
 const inputs = {
   fps:        document.getElementById('cfg-fps'),
   cpuUsage:   document.getElementById('cfg-cpu-usage'),
-  cpuTemp:    document.getElementById('cfg-cpu-temp'),
   gpuUsage:   document.getElementById('cfg-gpu-usage'),
   gpuTemp:    document.getElementById('cfg-gpu-temp'),
   ram:        document.getElementById('cfg-ram'),
@@ -41,7 +40,6 @@ function populateUI(config) {
 
   inputs.fps.checked      = m.fps !== false;
   inputs.cpuUsage.checked = m.cpu_usage !== false;
-  inputs.cpuTemp.checked  = m.cpu_temp !== false;
   inputs.gpuUsage.checked = m.gpu_usage !== false;
   inputs.gpuTemp.checked  = m.gpu_temp !== false;
   inputs.ram.checked      = m.ram_usage !== false;
@@ -75,7 +73,6 @@ function collectConfig() {
     metrics: {
       fps:       inputs.fps.checked,
       cpu_usage: inputs.cpuUsage.checked,
-      cpu_temp:  inputs.cpuTemp.checked,
       gpu_usage: inputs.gpuUsage.checked,
       gpu_temp:  inputs.gpuTemp.checked,
       ram_usage: inputs.ram.checked,
