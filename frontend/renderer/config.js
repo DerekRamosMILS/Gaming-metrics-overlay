@@ -6,6 +6,7 @@
 let currentConfig = null;
 
 const inputs = {
+  fps:        document.getElementById('cfg-fps'),
   cpuUsage:   document.getElementById('cfg-cpu-usage'),
   cpuTemp:    document.getElementById('cfg-cpu-temp'),
   gpuUsage:   document.getElementById('cfg-gpu-usage'),
@@ -20,6 +21,7 @@ const inputs = {
   interval:   document.getElementById('cfg-interval'),
   hotkey:     document.getElementById('cfg-hotkey'),
   colorText:  document.getElementById('cfg-color-text'),
+  colorFps:   document.getElementById('cfg-color-fps'),
   colorClock: document.getElementById('cfg-color-clock'),
   colorGood:  document.getElementById('cfg-color-good'),
   colorWarn:  document.getElementById('cfg-color-warn'),
@@ -37,6 +39,7 @@ function populateUI(config) {
   const m = config.metrics || {};
   const d = config.display || {};
 
+  inputs.fps.checked      = m.fps !== false;
   inputs.cpuUsage.checked = m.cpu_usage !== false;
   inputs.cpuTemp.checked  = m.cpu_temp !== false;
   inputs.gpuUsage.checked = m.gpu_usage !== false;
@@ -48,6 +51,7 @@ function populateUI(config) {
   inputs.layout.value     = d.layout || 'horizontal';
   const c = d.colors || {};
   inputs.colorText.value  = c.text  || '#2ecc71';
+  inputs.colorFps.value   = c.fps   || c.text || '#2ecc71';
   inputs.colorClock.value = c.clock || c.text || '#2ecc71';
   inputs.colorGood.value  = c.good  || '#2ecc71';
   inputs.colorWarn.value  = c.warn  || '#f39c12';
@@ -69,6 +73,7 @@ function updateDisplays() {
 function collectConfig() {
   return {
     metrics: {
+      fps:       inputs.fps.checked,
       cpu_usage: inputs.cpuUsage.checked,
       cpu_temp:  inputs.cpuTemp.checked,
       gpu_usage: inputs.gpuUsage.checked,
@@ -86,6 +91,7 @@ function collectConfig() {
       hotkey:          inputs.hotkey.value.trim() || 'alt+f10',
       colors: {
         text:  inputs.colorText.value,
+        fps:   inputs.colorFps.value,
         clock: inputs.colorClock.value,
         good:  inputs.colorGood.value,
         warn:  inputs.colorWarn.value,
