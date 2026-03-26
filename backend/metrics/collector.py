@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 from typing import Dict, Any
 
-from . import cpu, gpu, ram, fps as fps_module
+from . import cpu, gpu, ram
 
 
 class MetricsCollector:
@@ -28,13 +28,10 @@ class MetricsCollector:
             # Primer llamado a cpu_percent retorna 0.0; este lo descarta
             import psutil as _psutil
             _psutil.cpu_percent(interval=None)
-            if self._metrics_cfg.get("fps", True):
-                fps_module.start()
             self._started = True
 
     def stop(self) -> None:
         """Libera recursos."""
-        fps_module.stop()
         self._started = False
 
     def update_config(self, config: dict) -> None:
@@ -51,12 +48,6 @@ class MetricsCollector:
         result: Dict[str, Any] = {
             "timestamp": time.time(),
         }
-
-        # FPS
-        if cfg.get("fps", True):
-            fps_val = fps_module.get_fps()
-            result["fps"] = fps_val
-            result["fps_available"] = fps_module.is_available()
 
         # CPU
         cpu_data = {}

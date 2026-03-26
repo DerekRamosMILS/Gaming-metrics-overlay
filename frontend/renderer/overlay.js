@@ -26,7 +26,6 @@ let config = null;
 // ── Refs al DOM ───────────────────────────────────────────────────────────────
 const el = {
   overlay:     document.getElementById('overlay'),
-  fps:         document.getElementById('val-fps'),
   cpuUsage:    document.getElementById('val-cpu-usage'),
   cpuTemp:     document.getElementById('val-cpu-temp'),
   gpuUsage:    document.getElementById('val-gpu-usage'),
@@ -34,7 +33,6 @@ const el = {
   ram:         document.getElementById('val-ram'),
   clock:       document.getElementById('val-clock'),
   dot:         document.getElementById('connection-dot'),
-  rowFps:      document.getElementById('row-fps'),
   rowCpuUsage: document.getElementById('row-cpu-usage'),
   rowCpuTemp:  document.getElementById('row-cpu-temp'),
   rowGpuUsage: document.getElementById('row-gpu-usage'),
@@ -98,20 +96,6 @@ function notifySize() {
 
 // ── Renderizado de métricas ───────────────────────────────────────────────────
 function renderMetrics(data) {
-  // FPS
-  if (data.fps !== undefined || data.fps_available !== undefined) {
-    const fps = data.fps;
-    const avail = data.fps_available !== false;
-    if (!avail) {
-      el.fps.textContent = 'N/D';
-      el.fps.title = 'Coloca presentmon.exe en tools/';
-    } else {
-      el.fps.textContent = fps !== null ? Math.round(fps) : '--';
-      el.fps.title = '';
-    }
-    el.fps.classList.toggle('fps-low', fps !== null && fps < 30);
-  }
-
   // CPU
   if (data.cpu) {
     const { usage, temp } = data.cpu;
@@ -163,7 +147,6 @@ function applyConfig(cfg) {
   const d = cfg.display || {};
 
   // Visibilidad de filas
-  setRowVisible(el.rowFps,      m.fps !== false);
   setRowVisible(el.rowCpuUsage, m.cpu_usage !== false);
   setRowVisible(el.rowCpuTemp,  m.cpu_temp !== false);
   setRowVisible(el.rowGpuUsage, m.gpu_usage !== false);
@@ -190,7 +173,6 @@ function applyConfig(cfg) {
   // Colores personalizados via variables CSS
   const c = d.colors || {};
   el.overlay.style.setProperty('--text-primary', c.text  || '#2ecc71');
-  el.overlay.style.setProperty('--color-fps',    c.fps   || c.text || '#2ecc71');
   el.overlay.style.setProperty('--color-clock',  c.clock || c.text || '#2ecc71');
   el.overlay.style.setProperty('--color-good',   c.good  || '#2ecc71');
   el.overlay.style.setProperty('--color-warn',   c.warn  || '#f39c12');
